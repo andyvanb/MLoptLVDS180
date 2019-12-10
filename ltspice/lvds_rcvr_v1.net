@@ -1,0 +1,12 @@
+* C:\Users\andyv\Google Drive\source\repos\MLoptLVDS180\ltspice\lvds_rcvr_v1.asc
+M1 pulseout pulsein 0 0 NMOS l=0.18u w=0.5u
+M2 pulseout pulsein vdd vdd PMOS l=0.18u w=1u
+V1 vdd 0 1.8
+V2 pulsein 0 PULSE(0 1.8 100f 10f 10f 0.5n 1n)
+C1 pulseout 0 10f
+.model NMOS NMOS
+.model PMOS PMOS
+.lib C:\Users\andyv\OneDrive\Documents\LTspiceXVII\lib\cmp\standard.mos
+.tran 0 2n 0
+.backanno
+.end
