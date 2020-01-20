@@ -1,0 +1,19 @@
+Version 4
+SymbolType BLOCK
+RECTANGLE Normal -112 -72 112 72
+WINDOW 0 0 -72 Bottom 2
+PIN -112 -16 LEFT 8
+PINATTR PinName inn
+PINATTR SpiceOrder 1
+PIN -112 16 LEFT 8
+PINATTR PinName inp
+PINATTR SpiceOrder 2
+PIN -112 48 LEFT 8
+PINATTR PinName iref_sink
+PINATTR SpiceOrder 3
+PIN -112 -48 LEFT 8
+PINATTR PinName vdd
+PINATTR SpiceOrder 4
+PIN 112 0 RIGHT 8
+PINATTR PinName out
+PINATTR SpiceOrder 5

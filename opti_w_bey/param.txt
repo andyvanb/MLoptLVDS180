@@ -1,0 +1,27 @@
+.param in_i_l=1.8e-07
+.param in_i_w=1e-06
+.param infold_l=1.8e-07
+.param infold_w=6.5e-07
+.param infoldsrc_w=3.0063774556789433e-06
+.param inpair_l=1.8e-07
+.param inpair_w=9.850225229287707e-06
+.param intailsrc_w=3.695717406604762e-06
+.param neg_stg2_in_w=5e-07
+.param neg_stg2_l=1.8e-07
+.param neg_stg3_l=1.8e-07
+.param neg_stg3_w=2.475e-06
+.param neg_stg4_l=1.8e-07
+.param neg_stg4_w=4e-07
+.param pos_stg2_in_w=2.174860273356634e-06
+.param pos_stg2_l=1.8e-07
+.param pos_stg3_l=1.8e-07
+.param pos_stg3_w=5e-06
+.param pos_stg4_l=1.8e-07
+.param pos_stg4_w=8e-07
+.param stg2_mult=6
+.param pos_stg2_out_w=1.3049161640139804e-05
+.param neg_stg2_out_w=3e-06
+.param sim_temp=27
+.param vcm=0.8
+.param supply=1.8
+

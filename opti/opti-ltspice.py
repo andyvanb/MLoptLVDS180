@@ -1,63 +1,58 @@
 import numpy as np
-from apply_ltspice_filter import apply_ltspice_filter
+from run_ltspice import run_ltspice_meas_out
 import matplotlib.pyplot as plt
+import logging
+from datetime import datetime
 
-##################################################
-##             generate test signal             ##
-##################################################
+LEVELS = {'debug': logging.DEBUG,
+          'info': logging.INFO,
+          'warning': logging.WARNING,
+          'error': logging.ERROR,
+          'critical': logging.CRITICAL,
+          }
 
-# our samples shall be 100 ms wide
-sample_width = 100e-3
-# time step between samples: 0.1 ms
-delta_t = 0.1e-3
-samples = int(sample_width / delta_t)
 
-time = np.linspace(0, sample_width, samples)
+def set_up_logging():
+    now = datetime.now()
+    dt_string = now.strftime("%d-%m-%Y_%H.%M.%S")
+    LOG_FILENAME = 'circuit_ml_{}.log'.format(dt_string)
+    logging.basicConfig(filename=LOG_FILENAME, level=logging.DEBUG, )
 
-# we want 1 V between 10 ms and 30 ms, and 2.5 V between 40 and 70 ms
-signal_a = 0 + 1 * ((time > 10e-3) * (time < 30e-3)) + 2.5 * ((time > 40e-3) * (time < 70e-3))
 
-##################################################
-##        apply filter - configuration 1        ##
-##################################################
-
-# all values in SI units
-configuration_1 = {
-    "C": 100e-6,  # 100 uF
-    "L": 200e-3  # 200 mH
+# inst_state is the set of values we want to change for optimization
+inst_state = {
+    "supply": "1.8 ",
+    "inpair_w": "10.0u",
+    "inpair_l": "0.18u",
+    "infold_l": "0.18u",
+    "infold_w": "0.5u",
+    "infoldsrc_w": "5u",
+    "intailsrc_w": "5u",
+    "pos_mirror_l": "0.18u",
+    "pos_mirror_w": "1u",
+    "pos_stg2_in_l": "0.18u",
+    "pos_stg2_in_w": "1u",
+    "pos_stg2_out_l": "0.18u",
+    "pos_stg2_out_w": "4u",
+    "neg_stg2_in_l": "0.18u",
+    "neg_stg2_in_w": "0.5u",
+    "neg_stg2_out_l": "0.18u",
+    "neg_stg2_out_w": "2u",
+    "pos_stg3_l": "0.18u",
+    "pos_stg3_w": "5u",
+    "neg_stg3_l": "0.18u",
+    "neg_stg3_w": "3u",
+    "pos_stg4_l": "0.18u",
+    "pos_stg4_w": "1.1u",
+    "neg_stg4_l": "0.18u",
+    "neg_stg4_w": "0.4u"
 }
+set_up_logging()
+results = run_ltspice_meas_out("lvds_rcvr_testbed_v3.asc", params=inst_state)
 
-dummy, signal_b1 = apply_ltspice_filter(
-    "filter_circuit.asc",
-    time, signal_a,
-    params=configuration_1
-)
-
-##################################################
-##        apply filter - configuration 2        ##
-##################################################
-
-configuration_2 = {
-    "C": 50e-6,  # 50 uF
-    "L": 300e-3  # 300 mH
-}
-
-dummy, signal_b2 = apply_ltspice_filter(
-    "filter_circuit.asc",
-    time, signal_a,
-    params=configuration_2
-)
-
-##################################################
-##           plot input vs output(s)            ##
-##################################################
-
-plt.plot(time, signal_a, label="signal_a (LTSpice input)")
-plt.plot(time, signal_b1, label="signal_b1 (LTSpice output, C=100uF, L=200mH)")
-plt.plot(time, signal_b2, label="signal_b2 (LTSpice output, C=50uF,  L=300mH)")
-plt.xlabel("time (s)")
-plt.ylabel("voltage (V)")
-plt.ylim((-1, 3.5))
-
-plt.legend()
-plt.show()
+# print(results["run_time"])
+# print(results["data"])
+print(results)
+nmval = results["data"].set_index('Name')['Value'].to_dict()
+tp_delta = (nmval['tpdr']-nmval['tpdf'])*1e12
+print("Tpd_rise - Tpd_fall = %0.0f ps" % tp_delta)

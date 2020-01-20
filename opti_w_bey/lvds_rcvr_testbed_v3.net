@@ -1,0 +1,77 @@
+* C:\Users\andyv\Google Drive\source\repos\MLoptLVDS180\opti_w_bey\lvds_rcvr_testbed_v3.asc
+V1 vdd 0 {supply}
+I1 iref_sink 0 50µ
+V3 inp inn PULSE({pulse_ampl /2} {-1*pulse_ampl /2} {cycle_time/10} {cycle_time/10} {cycle_time/10} {cycle_time/2} {cycle_time})
+R1 inp vcm 50
+R2 vcm inn 50
+V4 vcm 0 {vcm}
+C2 out 0 10f
+E1 in 0 inp inn 1.0
+XX1 inn inp iref_sink vdd out lvds_rcvr_v4
+
+* block symbol definitions
+.subckt lvds_rcvr_v4 inn inp iref_sink vdd out
+M3 pair_neg_out inp vcm vcm PMOS l={inpair_l} w={inpair_w}
+M4 pair_pos_out inn vcm vcm PMOS l={inpair_l} w={inpair_w}
+M5 vcm iref_sink vdd vdd PMOS l={in_i_l} w={intailsrc_w}
+M6 pair_pos_out mirror_gate 0 0 NMOS l={infold_l} w={infold_w}
+M7 pair_neg_out mirror_gate 0 0 NMOS l={infold_l} w={infold_w}
+M8 iref_sink iref_sink vdd vdd PMOS l={in_i_l} w={in_i_w}
+M9 mirror_gate iref_sink vdd vdd PMOS l={in_i_l} w={infoldsrc_w}
+M10 mirror_gate mirror_gate 0 0 NMOS l={infold_l} w={infold_w}
+M11 mirror_pos pair_neg_out vdd vdd PMOS l={pos_stg2_l} w={pos_stg2_in_w}
+M12 pair_neg_out pair_neg_out vdd vdd PMOS l={pos_stg2_l} w={pos_stg2_in_w}
+M13 stg2_out pair_pos_out vdd vdd PMOS l={pos_stg2_l} w={pos_stg2_out_w}
+M14 pair_pos_out pair_pos_out vdd vdd PMOS l={pos_stg2_l} w={pos_stg2_in_w}
+M15 stg2_out mirror_pos 0 0 NMOS l={neg_stg2_l} w={neg_stg2_out_w}
+M16 mirror_pos mirror_pos 0 0 NMOS l={neg_stg2_l} w={neg_stg2_in_w}
+M17 stg3_out stg2_out vdd vdd PMOS l={pos_stg3_l} w={pos_stg3_w}
+M18 stg3_out stg2_out 0 0 NMOS l={neg_stg3_l} w={neg_stg3_w}
+C1 vcm 0 1f
+C2 pair_pos_out 0 0.2f
+C3 pair_neg_out 0 0.2f
+C4 mirror_pos 0 0.2f
+C5 stg1_out 0 0.2f
+C6 iref_sink 0 1f
+C7 mirror_gate 0 1f
+M1 out stg3_out vdd vdd PMOS l={pos_stg4_l} w={pos_stg4_w}
+M2 out stg3_out 0 0 NMOS l={neg_stg4_l} w={neg_stg4_w}
+.ends lvds_rcvr_v4
+
+.model NMOS NMOS
+.model PMOS PMOS
+.lib C:\Users\andyv\OneDrive\Documents\LTspiceXVII\lib\cmp\standard.mos
+.tran 0 {cycle_time*1} 0
+.param pulse_ampl=0.05
+*.param supply=1.8
+.param cycle_time=6n
+*----------------------------------------------------------------------
+* rising prop delay
+.measure tpdr
++ TRIG v(in) VAL=0 FALL=1
++ TARG v(out) VAL='SUPPLY/2' RISE=1
+* falling prop delay
+.measure tpdf
++ TRIG v(in) VAL=0 RISE=1
++ TARG v(out) VAL='SUPPLY/2' FALL=1
+* average prop delay
+.measure tpd param=(tpdr+tpdf)/2
+* Delta rise fall time - essential FOM for speed
+.measure tdrf param=tpdr-tpdf
+*
+* rise time
+.measure trise TRIG v(out) VAL='0.333*SUPPLY' RISE=1 TARG v(out) VAL='0.667*SUPPLY' RISE=1
+* fall time
+.meas tfall TRIG v(out)={0.667*SUPPLY} FALL=1 TARG v(out)={0.333*SUPPLY} FALL=1
+* The optimizer program drops the params in here
+*
+.include param.txt
+*
+*.save V(out) V(in)
+* Note that we must save everything we are trying to measure
+*
+.include 180nm_bulk.lib
+*
+.temp {sim_temp}
+.backanno
+.end

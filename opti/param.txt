@@ -1,3 +1,26 @@
-.param C 5.000000E-05
-.param L 3.000000E-01
+.param supply=1.8 
+.param inpair_w=10.0u
+.param inpair_l=0.18u
+.param infold_l=0.18u
+.param infold_w=0.5u
+.param infoldsrc_w=5u
+.param intailsrc_w=5u
+.param pos_mirror_l=0.18u
+.param pos_mirror_w=1u
+.param pos_stg2_in_l=0.18u
+.param pos_stg2_in_w=1u
+.param pos_stg2_out_l=0.18u
+.param pos_stg2_out_w=4u
+.param neg_stg2_in_l=0.18u
+.param neg_stg2_in_w=0.5u
+.param neg_stg2_out_l=0.18u
+.param neg_stg2_out_w=2u
+.param pos_stg3_l=0.18u
+.param pos_stg3_w=5u
+.param neg_stg3_l=0.18u
+.param neg_stg3_w=3u
+.param pos_stg4_l=0.18u
+.param pos_stg4_w=1.1u
+.param neg_stg4_l=0.18u
+.param neg_stg4_w=0.4u
 
